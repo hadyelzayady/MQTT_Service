@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" language="JavaScript">
+        let client;
+
+        function Connect() {
+            client = new Paho.MQTT.Client("broker.mqttdashboard.com", 8000, "clientjs");
+            client.connect({onSuccess: onConnect});
+        }
+
+        function Publish() {
+            message = new Paho.MQTT.Message("hello again from flask");
+            message.destinationName = "testtopic/1";
+            client.send(message);
+        }
+
+        function Subscribe() {
+            client.subscribe("testtopic/1");
+        }
+
+
+        function onConnect() {
+            $('#status').text("Connected");
+            connection_button = $("#connection_button");
+            connection_button.text("Disconnect");
+            connection_button.attr("onclick", "client.disconnect();");
+
+            client.onMessageArrived = onMessageArrived;
+            client.onConnectionLost = onConnectionLost;
+
+
+        }
+
+
+        function onConnectionLost() {
+            $('#status').text("Not Connected");
+            connection_button = $("#connection_button");
+            connection_button.text("Connect");
+            connection_button.attr("onclick", "Connect()");
+            {#    remove messages #}
+
+        }
+
+        function onMessageArrived(message) {
+            message_element="<li>"+message.payloadString+"</li>";
+            $("#message_list").prepend(message_element);
+        }
+    </script>
+    <title>MQTT</title>
+</head>
+<body>
+<p id="status">status: not connected</p>
+<button id="connection_button" onclick="Connect()">Connect</button>
+<button onclick="Publish()">Publish</button>
+<button onclick="Subscribe()">Subscribe</button>
+<ul id="message_list">
+
+</ul>
+</body>
+</html>
