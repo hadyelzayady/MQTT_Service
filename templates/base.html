@@ -17,16 +17,23 @@
             message.destinationName = "testtopic/1";
             client.send(message);
         }
+        function subscribedBefore(topic){
+            topic=topic.replace("/","");
+            return $("#" + topic).length !== 0;
 
+        }
         function Subscribe() {
             let topic = $("#topic_input").val().toString();
             console.log(topic);
-            client.subscribe(topic, {onSuccess: onSubscribeSuccess, invocationContext: {topic: topic}});
+            if(!subscribedBefore(topic))
+                client.subscribe(topic, {onSuccess: onSubscribeSuccess, invocationContext: {topic: topic}});
+            else
+                alert("already subscribed");
         }
 
         function onSubscribeSuccess(obj) {
             topic=obj.invocationContext.topic;
-            let id=++topic_id
+            let id=topic.replace("/","");
             sub_elem = `<li id="${id}"> <p>${topic} <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
             $("#subs").append(sub_elem);
         }
