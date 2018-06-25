@@ -2,52 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript" language="JavaScript">
         var client;
-        let topic_id=0;
+        let connected = false;
+
         function Connect() {
-            client = new Paho.MQTT.Client("broker.mqttdashboard.com", 8000, "clientjs");
-            client.connect({onSuccess: onConnect});
+            broker = $("#broker").val();
+            client = new Paho.MQTT.Client(broker, 8000, "clientjs");
+            client.connect({onSuccess: onConnect, onFailure: onFailure});
         }
 
         function Publish() {
+            if (!connected) {
+                alert("you are not connected to broker");
+                return;
+            }
             message = new Paho.MQTT.Message("hello again from flask");
             message.destinationName = "testtopic/1";
             client.send(message);
         }
-        function subscribedBefore(topic){
-            topic=topic.replace("/","");
+
+        function subscribedBefore(topic) {
+            topic = topic.replace("/", "");
             return $("#" + topic).length !== 0;
 
         }
+
         function Subscribe() {
             let topic = $("#topic_input").val().toString();
             console.log(topic);
-            if(!subscribedBefore(topic))
+            if (!subscribedBefore(topic))
                 client.subscribe(topic, {onSuccess: onSubscribeSuccess, invocationContext: {topic: topic}});
             else
                 alert("already subscribed");
         }
 
         function onSubscribeSuccess(obj) {
-            topic=obj.invocationContext.topic;
-            let id=topic.replace("/","");
+            topic = obj.invocationContext.topic;
+            let id = topic.replace("/", "");
             sub_elem = `<li id="${id}"> <p>${topic} <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
             $("#subs").append(sub_elem);
         }
 
 
-        function unSubscribe(topic,id) {
-            client.unsubscribe(topic, {onSuccess: onUnSubscribeSuccess, invocationContext: {topic: topic,topic_id:id}});
+        function unSubscribe(topic, id) {
+            client.unsubscribe(topic, {
+                onSuccess: onUnSubscribeSuccess,
+                invocationContext: {topic: topic, topic_id: id}
+            });
         }
 
         function onUnSubscribeSuccess(obj) {
-            topic=obj.invocationContext.topic;
-            id=obj.invocationContext.topic_id;
-            $('#'+id).remove();
-
+            topic = obj.invocationContext.topic;
+            id = obj.invocationContext.topic_id;
+            $('#' + id).remove();
+            {#    remove messages from unsubscribed topic#}
         }
 
         function onConnect() {
@@ -57,6 +70,11 @@
             connection_button.attr("onclick", "client.disconnect();");
             client.onMessageArrived = onMessageArrived;
             client.onConnectionLost = onConnectionLost;
+            connected = true;
+        }
+
+        function onFailure() {
+            alert("error: may be  unknown host");
         }
 
         function onConnectionLost() {
@@ -65,27 +83,49 @@
             connection_button.text("Connect");
             connection_button.attr("onclick", "Connect()");
             {#    remove messages #}
-
+            $("#message_list").remove();
+            $("#subs").remove();
+            connected = false;
         }
 
         function onMessageArrived(message) {
-            message_element = "<li>" + message.payloadString + "</li>";
+            topic = message.destinationName.replace("/", "");
+            message_element = `<li class=${topic}><div class=\"w3-panel w3-card w3-yellow\"><p> ${message.payloadString }
+                <br><small>Topic:${message.destinationName}<br>qos:${message.qos}<br>retained:${message.retained}</small><br>Time:
+                </p></div></li>`;
             $("#message_list").prepend(message_element);
         }
+
+        function init() {
+            let text = "";
+            let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+            for (let i = 0; i < 10; i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            $("#clientid").val("clientid"+text)
+        }
+
+        window.onload = init
     </script>
     <title>MQTT</title>
 </head>
 <body>
 <p id="status">status: not connected</p>
+<div class="broker-info">
+    Host: <input id="broker" type="text" placeholder="broker url or ip">
+    Port: <input id="port" type="number" placeholder="port number">
+    ClientID: <input id="clientid" type="text" placeholder="client id">
+    <button id="connection_button" onclick="Connect()">Connect</button>
+</div>
 <div>
     <input id="topic_input" type="text" placeholder="topic name" name="topic" required>
     <button onclick="Subscribe()">Subscribe</button>
 </div>
 
 
-<button id="connection_button" onclick="Connect()">Connect</button>
 <button onclick="Publish()">Publish</button>
-<ul id="message_list" style="alignment: right">
+<ul id="message_list" style="alignment: right;list-style-type:None">
 </ul>
 <ul id="subs">
 
