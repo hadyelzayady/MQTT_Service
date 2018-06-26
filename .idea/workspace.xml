@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="ba9963b2-ae42-4335-baf3-354d1577ef9f" name="Default" comment="add travis file" />
+=======
+    <list default="true" id="ba9963b2-ae42-4335-baf3-354d1577ef9f" name="Default" comment="add travis file">
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
+>>>>>>> 00d00ccd20869c15a50d632fe9e96457c6cf4e28
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,8 +35,13 @@
       <file leaf-file-name="requirements.txt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/requirements.txt">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="118">
               <caret line="42" column="13" lean-forward="true" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+=======
+            <state relative-caret-position="16">
+              <caret line="24" selection-start-line="24" selection-end-line="24" />
+>>>>>>> 00d00ccd20869c15a50d632fe9e96457c6cf4e28
             </state>
           </provider>
         </entry>
@@ -332,8 +343,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="118">
           <caret line="42" column="13" lean-forward="true" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+=======
+        <state relative-caret-position="16">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+>>>>>>> 00d00ccd20869c15a50d632fe9e96457c6cf4e28
         </state>
       </provider>
     </entry>
