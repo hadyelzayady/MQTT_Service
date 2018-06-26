@@ -16,14 +16,17 @@
                 port = parseInt($("#port").val());
                 clientid = $("#clientid").val();
                 keepalive = parseInt($("#Keepalive").val());
-
+                username=$("#id_username").val();
+                password=$("#id_password").val();
                 client = new Paho.MQTT.Client(broker, port, clientid);
                 {#last will message#}
                 topic=$("#topic_lastwill").val().toString();
                 connect_options={
                     keepAliveInterval: keepalive,
                     onSuccess: onConnect,
-                    onFailure: onFailure
+                    onFailure: onFailure,
+                    userName:username,
+                    password:password
                 };
                 if(topic !=="")
                 {
@@ -34,6 +37,8 @@
                     message.retained = $("#retain_lastwill").is(":checked");
                     connect_options["willMessage"]=message;
                 }
+
+
                 client.connect(connect_options);
             }catch (e) {
                 console.log(e);
@@ -76,7 +81,7 @@
             topic = obj.invocationContext.topic;
             Qos = obj.invocationContext.qos;
             let id = topic.replace("/", "");
-            sub_elem = `<li id="${id}"> <p>${topic} <br><small>QOS:${Qos}</small> <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
+            sub_elem = `<li id="${id}" style="display:inline;"> <p>${topic} <br><small>QOS:${Qos}</small> <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
             $("#subs").append(sub_elem);
         }
 
@@ -156,6 +161,8 @@
     Port: <input id="port" type="number" placeholder="port number" required value="8000">
     ClientID: <input id="clientid" type="text">
     Keep Alive:<input id="Keepalive" type="text" placeholder="60">
+    username:<input id="id_username" type="text">
+    password:<input id="id_password" type="password">
     <div id="last_will_msg">
         <h3>Last will message</h3>
         last-will Topic:<input id="topic_lastwill" type="text">
@@ -169,7 +176,7 @@
 <div>
     <br>
     Topic:<input id="topic_input" type="text" placeholder="topic name" name="topic" required value="testtopic/1">
-    QOS: <input id="QOS_sub" type="number" min="0" max="2" value="0" required>
+    Qos: <input id="QOS_sub" type="number" min="0" max="2" value="0" required>
     <button onclick="Subscribe()">Subscribe</button>
 </div>
 <div id="publish">
@@ -180,11 +187,11 @@
     <input id="retain_pub" type="checkbox">Retain:
     <button onclick="Publish()">Publish</button>
 </div>
-
-<ul id="message_list" style="alignment: right;list-style-type:None">
-</ul>
 <ul id="subs">
 
 </ul>
+<ul id="message_list" style="alignment: right;list-style-type:None">
+</ul>
+
 </body>
 </html>
