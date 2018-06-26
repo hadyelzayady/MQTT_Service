@@ -25,7 +25,6 @@
             message.destinationName = $("#topic_pub").val().toString();
             message.qos = parseInt($("#qos_pub").val());
             message.retained = $("#retain_pub").is(":checked");
-            message.time
             client.send(message);
         }
 
@@ -98,8 +97,15 @@
 
         function onMessageArrived(message) {
             topic = message.destinationName.replace("/", "");
+            now=new Date();
+            day=now.getDay();
+            month=now.getMonth();
+            year=now.getFullYear();
+            hour=now.getHours();
+            minute=now.getMinutes();
+            sec=now.getSeconds();
             message_element = `<li class=${topic}><div class=\"w3-panel w3-card w3-yellow\"><p> ${message.payloadString }
-                <br><small>Topic:${message.destinationName}<br>qos:${message.qos}<br>retained:${message.retained}</small><br>Time:
+                <br><small>Topic:${message.destinationName}<br>qos:${message.qos}<br>retained:${message.retained}</small><br>Time:${year}-${month}-${day} ${hour}:${minute}:${sec}
                 </p></div></li>`;
             $("#message_list").prepend(message_element);
         }
