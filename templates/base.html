@@ -21,8 +21,11 @@
                 alert("you are not connected to broker");
                 return;
             }
-            message = new Paho.MQTT.Message("hello again from flask");
-            message.destinationName = "testtopic/1";
+            message = new Paho.MQTT.Message($("#msg_pub").val());
+            message.destinationName = $("#topic_pub").val().toString();
+            message.qos = parseInt($("#qos_pub").val());
+            message.retained = $("#retain_pub").is(":checked");
+            message.time
             client.send(message);
         }
 
@@ -130,9 +133,14 @@
     QOS: <input id="QOS_sub" type="number" min="0" max="2" value="0" required>
     <button onclick="Subscribe()">Subscribe</button>
 </div>
+<div id="publish">
+    Topic:<input id="topic_pub" type="text" >
+    Qos:<input id="qos_pub" type="number" min="0" max="2" value="0" required>
+    Message:<textarea id="msg_pub"></textarea>
+    <input id="retain_pub" type="checkbox">Retain:
+    <button onclick="Publish()">Publish</button>
+</div>
 
-
-<button onclick="Publish()">Publish</button>
 <ul id="message_list" style="alignment: right;list-style-type:None">
 </ul>
 <ul id="subs">
