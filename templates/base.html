@@ -11,9 +11,34 @@
         let connected = false;
 
         function Connect() {
-            broker = $("#broker").val();
-            client = new Paho.MQTT.Client(broker, 8000, "clientjs");
-            client.connect({onSuccess: onConnect, onFailure: onFailure});
+            try {
+                broker = $("#broker").val();
+                port = parseInt($("#port").val());
+                clientid = $("#clientid").val();
+                keepalive = parseInt($("#Keepalive").val());
+
+                client = new Paho.MQTT.Client(broker, port, clientid);
+                {#last will message#}
+                topic=$("#topic_lastwill").val().toString();
+                connect_options={
+                    keepAliveInterval: keepalive,
+                    onSuccess: onConnect,
+                    onFailure: onFailure
+                };
+                if(topic !=="")
+                {
+
+                    message = new Paho.MQTT.Message($("#msg_lastwill").val());
+                    message.destinationName =topic;
+                    message.qos = parseInt($("#qos_lastwill").val());
+                    message.retained = $("#retain_lastwill").is(":checked");
+                    connect_options["willMessage"]=message;
+                }
+                client.connect(connect_options);
+            }catch (e) {
+                console.log(e);
+            }
+
         }
 
         function Publish() {
@@ -97,13 +122,13 @@
 
         function onMessageArrived(message) {
             topic = message.destinationName.replace("/", "");
-            now=new Date();
-            day=now.getDay();
-            month=now.getMonth();
-            year=now.getFullYear();
-            hour=now.getHours();
-            minute=now.getMinutes();
-            sec=now.getSeconds();
+            now = new Date();
+            day = now.getDay();
+            month = now.getMonth();
+            year = now.getFullYear();
+            hour = now.getHours();
+            minute = now.getMinutes();
+            sec = now.getSeconds();
             message_element = `<li class=${topic}><div class=\"w3-panel w3-card w3-yellow\"><p> ${message.payloadString }
                 <br><small>Topic:${message.destinationName}<br>qos:${message.qos}<br>retained:${message.retained}</small><br>Time:${year}-${month}-${day} ${hour}:${minute}:${sec}
                 </p></div></li>`;
@@ -131,16 +156,25 @@
     Port: <input id="port" type="number" placeholder="port number" required value="8000">
     ClientID: <input id="clientid" type="text">
     Keep Alive:<input id="Keepalive" type="text" placeholder="60">
-    Last-Will Topic <input id="LW_topic" type="text">
+    <div id="last_will_msg">
+        <h3>Last will message</h3>
+        last-will Topic:<input id="topic_lastwill" type="text">
+        last-will Qos:<input id="qos_lastwill" type="number" min="0" max="2" value="0" required>
+        last-will Message:<textarea id="msg_lastwill"></textarea>
+        <input id="retain_lastwill" type="checkbox">Retain
+    </div>
     <button id="connection_button" onclick="Connect()">Connect</button>
+
 </div>
 <div>
+    <br>
     Topic:<input id="topic_input" type="text" placeholder="topic name" name="topic" required value="testtopic/1">
     QOS: <input id="QOS_sub" type="number" min="0" max="2" value="0" required>
     <button onclick="Subscribe()">Subscribe</button>
 </div>
 <div id="publish">
-    Topic:<input id="topic_pub" type="text" >
+    <br>
+    Topic:<input id="topic_pub" type="text">
     Qos:<input id="qos_pub" type="number" min="0" max="2" value="0" required>
     Message:<textarea id="msg_pub"></textarea>
     <input id="retain_pub" type="checkbox">Retain:
