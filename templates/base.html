@@ -34,17 +34,18 @@
 
         function Subscribe() {
             let topic = $("#topic_input").val().toString();
-            console.log(topic);
+            let Qos = parseInt($("#QOS_sub").val());
             if (!subscribedBefore(topic))
-                client.subscribe(topic, {onSuccess: onSubscribeSuccess, invocationContext: {topic: topic}});
+                client.subscribe(topic, {onSuccess: onSubscribeSuccess,qos:Qos, invocationContext: {topic: topic,qos:Qos}});
             else
                 alert("already subscribed");
         }
 
         function onSubscribeSuccess(obj) {
             topic = obj.invocationContext.topic;
+            Qos=obj.invocationContext.qos;
             let id = topic.replace("/", "");
-            sub_elem = `<li id="${id}"> <p>${topic} <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
+            sub_elem = `<li id="${id}"> <p>${topic} <br><small>QOS:${Qos}</small> <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
             $("#subs").append(sub_elem);
         }
 
@@ -60,7 +61,8 @@
             topic = obj.invocationContext.topic;
             id = obj.invocationContext.topic_id;
             $('#' + id).remove();
-            {#    remove messages from unsubscribed topic#}
+            $('.' + id).remove();
+
         }
 
         function onConnect() {
@@ -82,7 +84,6 @@
             connection_button = $("#connection_button");
             connection_button.text("Connect");
             connection_button.attr("onclick", "Connect()");
-            {#    remove messages #}
             $("#message_list").remove();
             $("#subs").remove();
             connected = false;
@@ -113,13 +114,16 @@
 <body>
 <p id="status">status: not connected</p>
 <div class="broker-info">
-    Host: <input id="broker" type="text" placeholder="broker url or ip">
-    Port: <input id="port" type="number" placeholder="port number">
-    ClientID: <input id="clientid" type="text" placeholder="client id">
+    Host: <input id="broker" type="text" placeholder="broker url or ip" required value="broker.mqttdashboard.com">
+    Port: <input id="port" type="number" placeholder="port number" required value="8000">
+    ClientID: <input id="clientid" type="text" >
+    Keep Alive:<input id="Keepalive" type="text" placeholder="60" >
+    Last-Will Topic <input id="LW_topic" type="text">
     <button id="connection_button" onclick="Connect()">Connect</button>
 </div>
 <div>
-    <input id="topic_input" type="text" placeholder="topic name" name="topic" required>
+    Topic:<input id="topic_input" type="text" placeholder="topic name" name="topic" required value="testtopic/1">
+    QOS: <input id="QOS_sub" type="number" min="0" max="2" value="0" required>
     <button onclick="Subscribe()">Subscribe</button>
 </div>
 
