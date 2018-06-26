@@ -36,14 +36,18 @@
             let topic = $("#topic_input").val().toString();
             let Qos = parseInt($("#QOS_sub").val());
             if (!subscribedBefore(topic))
-                client.subscribe(topic, {onSuccess: onSubscribeSuccess,qos:Qos, invocationContext: {topic: topic,qos:Qos}});
+                client.subscribe(topic, {
+                    onSuccess: onSubscribeSuccess,
+                    qos: Qos,
+                    invocationContext: {topic: topic, qos: Qos}
+                });
             else
                 alert("already subscribed");
         }
 
         function onSubscribeSuccess(obj) {
             topic = obj.invocationContext.topic;
-            Qos=obj.invocationContext.qos;
+            Qos = obj.invocationContext.qos;
             let id = topic.replace("/", "");
             sub_elem = `<li id="${id}"> <p>${topic} <br><small>QOS:${Qos}</small> <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
             $("#subs").append(sub_elem);
@@ -104,7 +108,7 @@
             for (let i = 0; i < 10; i++)
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
 
-            $("#clientid").val("clientid"+text)
+            $("#clientid").val("clientid" + text)
         }
 
         window.onload = init
@@ -116,8 +120,8 @@
 <div class="broker-info">
     Host: <input id="broker" type="text" placeholder="broker url or ip" required value="broker.mqttdashboard.com">
     Port: <input id="port" type="number" placeholder="port number" required value="8000">
-    ClientID: <input id="clientid" type="text" >
-    Keep Alive:<input id="Keepalive" type="text" placeholder="60" >
+    ClientID: <input id="clientid" type="text">
+    Keep Alive:<input id="Keepalive" type="text" placeholder="60">
     Last-Will Topic <input id="LW_topic" type="text">
     <button id="connection_button" onclick="Connect()">Connect</button>
 </div>
