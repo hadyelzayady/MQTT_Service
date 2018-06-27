@@ -16,32 +16,31 @@
                 port = parseInt($("#port").val());
                 clientid = $("#clientid").val();
                 keepalive = parseInt($("#Keepalive").val());
-                username=$("#id_username").val();
-                password=$("#id_password").val();
+                username = $("#id_username").val();
+                password = $("#id_password").val();
                 client = new Paho.MQTT.Client(broker, port, clientid);
                 {#last will message#}
-                topic=$("#topic_lastwill").val().toString();
-                connect_options={
+                topic = $("#topic_lastwill").val().toString();
+                connect_options = {
                     keepAliveInterval: keepalive,
                     onSuccess: onConnect,
                     onFailure: onFailure,
-                    userName:username,
-                    password:password,
-                    useSSL:false
+                    userName: username,
+                    password: password,
+                    useSSL: false
                 };
-                if(topic !=="")
-                {
+                if (topic !== "") {
 
                     message = new Paho.MQTT.Message($("#msg_lastwill").val());
-                    message.destinationName =topic;
+                    message.destinationName = topic;
                     message.qos = parseInt($("#qos_lastwill").val());
                     message.retained = $("#retain_lastwill").is(":checked");
-                    connect_options["willMessage"]=message;
+                    connect_options["willMessage"] = message;
                 }
 
 
                 client.connect(connect_options);
-            }catch (e) {
+            } catch (e) {
                 console.log(e);
             }
 
@@ -66,22 +65,27 @@
         }
 
         function Subscribe() {
-            let topic = $("#topic_input").val().toString();
-            let Qos = parseInt($("#QOS_sub").val());
-            if (!subscribedBefore(topic))
-                client.subscribe(topic, {
-                    onSuccess: onSubscribeSuccess,
-                    qos: Qos,
-                    invocationContext: {topic: topic, qos: Qos}
-                });
-            else
-                alert("already subscribed");
+            try {
+
+                let topic = $("#topic_input").val().toString();
+                let Qos = parseInt($("#QOS_sub").val());
+                if (!subscribedBefore(topic))
+                    client.subscribe(topic, {
+                        onSuccess: onSubscribeSuccess,
+                        qos: Qos,
+                        invocationContext: {topic: topic, qos: Qos}
+                    });
+                else
+                    alert("already subscribed");
+            } catch (e) {
+                console.log(e);
+            }
         }
 
         function onSubscribeSuccess(obj) {
             topic = obj.invocationContext.topic;
             Qos = obj.invocationContext.qos;
-            let id = topic.replaceAll(/\//g, "");
+            let id = topic.replace(/\//g, "");
             sub_elem = `<li id="${id}" style="display:inline;"> <p>${topic} <br><small>QOS:${Qos}</small> <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
             $("#subs").append(sub_elem);
         }
@@ -127,7 +131,7 @@
         }
 
         function onMessageArrived(message) {
-            topic = message.destinationName.replaceAll(/\//g, "");
+            topic = message.destinationName.replace(/\//g, "");
             now = new Date();
             day = now.getDay();
             month = now.getMonth();
