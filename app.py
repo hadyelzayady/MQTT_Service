@@ -1,9 +1,6 @@
-from flask import Flask
-from flask import Flask, render_template, request, redirect, url_for
-import paho.mqtt.client as mqtt
+from flask import Flask, render_template
 app = Flask(__name__)
 
-broker="broker.mqttdashboard.com"
 @app.route('/')
 def main():
     return render_template("base.html")
