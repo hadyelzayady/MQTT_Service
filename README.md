@@ -3,8 +3,8 @@
  <h1>Installation</h1>
  install flask:
  <code>
- pip install flask
+ pip install -r requirements.txt
  </code>
  <br>
- run the server:python app.py
+ run the server:<code>python app.py</code>
  
