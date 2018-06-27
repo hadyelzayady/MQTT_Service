@@ -6,5 +6,5 @@
  pip install flask
  </code>
  <br>
- run the server:python app.py
+ run the server:<code>python app.py</code>
  
