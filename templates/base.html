@@ -60,7 +60,7 @@
         }
 
         function subscribedBefore(topic) {
-            topic = topic.replace("/", "");
+            topic = topic.replace(/\//g, "");
             return $("#" + topic).length !== 0;
 
         }
@@ -81,7 +81,7 @@
         function onSubscribeSuccess(obj) {
             topic = obj.invocationContext.topic;
             Qos = obj.invocationContext.qos;
-            let id = topic.replace("/", "");
+            let id = topic.replaceAll(/\//g, "");
             sub_elem = `<li id="${id}" style="display:inline;"> <p>${topic} <br><small>QOS:${Qos}</small> <button  onclick="unSubscribe('${topic}','${id}')">delete</button></p></li>`;
             $("#subs").append(sub_elem);
         }
@@ -127,7 +127,7 @@
         }
 
         function onMessageArrived(message) {
-            topic = message.destinationName.replace("/", "");
+            topic = message.destinationName.replaceAll(/\//g, "");
             now = new Date();
             day = now.getDay();
             month = now.getMonth();
